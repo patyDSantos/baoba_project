@@ -220,7 +220,7 @@ class MetricsProcessor:
         plt.tight_layout()
         plt.show()
 
-    def plot_interactions_by_service_horizontal(df, monitoramento, 
+    def plot_interactions_by_service_horizontal(self, df, monitoramento, 
                                             title='Interações por Serviço - ' + monitoramento):
         """
         Filtra o DataFrame pelo monitoramento informado e agrupa as interações por serviço (coluna 'servico.keyword').
