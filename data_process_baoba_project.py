@@ -227,19 +227,14 @@ class MetricsProcessor:
         Filtra o DataFrame pelo monitoramento informado, converte a coluna de data para datetime,
         agrupa as interações diárias (somando os valores da coluna 'interacoes') e plota um gráfico de linha com anotações.
         """
-        # Filtrar datas válidas
         df = df[pd.to_datetime(df[date_column], errors='coerce').notna()]
         
-        # Converter a coluna de data para datetime e extrair a data (sem horário)
         df['Data'] = pd.to_datetime(df[date_column]).dt.date
         
-        # Filtrar pelo monitoramento desejado
         df = df[df['monitoramento_nome.keyword'] == monitoramento]
         
-        # Agrupar os dados por data, somando a coluna 'interacoes'
         df_interacoes = df.groupby('Data')['interacoes'].sum().reset_index(name='Total')
         
-        # Formatar as datas conforme o formato desejado
         df_interacoes['Data'] = pd.to_datetime(df_interacoes['Data']).dt.strftime(date_format)
         
         # Criar o gráfico de linha
@@ -250,19 +245,17 @@ class MetricsProcessor:
         plt.ylabel('Total de Interações', fontsize=36)
         plt.xticks(rotation=45, fontsize=24)
         plt.yticks(fontsize=28)
+        
         plt.grid(True, linestyle='--', alpha=0.7)
         
-        # Ajustar o limite superior do eixo Y
         plt.ylim(0, df_interacoes['Total'].max() * 1.2)
-        
-        # Evitar notação científica no eixo Y
+
         plt.ticklabel_format(style='plain', axis='y')
         
         # Aplicar formatação personalizada pt-BR para os valores do eixo Y
         ax = plt.gca()
-        ax.yaxis.set_major_formatter(ticker.FuncFormatter(format_pt_br))
+        ax.yaxis.set_major_formatter(ticker.FuncFormatter(self.format_pt_br))
         
-        # Inserir as anotações conforme os picos informados
         for annotation in annotations:
             # Encontrar a linha correspondente à data da anotação
             match_data = df_interacoes[df_interacoes['Data'] == annotation["date"]]
