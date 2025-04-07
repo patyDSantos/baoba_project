@@ -22,6 +22,18 @@ class MetricsProcessor:
             return {k: 0 for k in keys}
         return {k: int(dados_dict.get(k, 0)) for k in keys}
 
+    @staticmethod
+    def format_pt_br(x, pos):
+        """
+        Formata o valor x usando o padrão pt-BR:
+        separador de milhares como ponto e sem casas decimais.
+        """
+        # Formata o número com separador de milhares em estilo US (vírgula) e sem decimais
+        formatted = "{:,.0f}".format(x)
+        # Substitui a vírgula (thousands separator) por ponto
+        formatted = formatted.replace(",", ".")
+        return formatted
+
     def process_service(self, df, service, keys):
         """
         Filtra o DataFrame para o serviço especificado,
@@ -152,74 +164,6 @@ class MetricsProcessor:
         plt.tight_layout()
         plt.show()
 
-    def plot_daily_interactions(self, df, monitoramento, annotations, 
-                            date_column='data', 
-                            date_format='%d-%m-%Y', 
-                            title='Interações Diárias - '):
-        """
-        Filtra o DataFrame pelo monitoramento informado, converte a coluna de data para datetime,
-        agrupa as interações diárias (somando os valores da coluna 'interacoes') e plota um gráfico de linha com anotações.
-        
-        Parâmetros:
-          - df: DataFrame contendo os dados.
-          - monitoramento: Nome do monitoramento a ser filtrado (valor da coluna 'monitoramento_nome.keyword').
-          - annotations: Lista de dicionários com anotações. Cada dicionário deve ter as chaves:
-                "date": data no formato especificado em `date_format` (ex.: '14-03-2025' ou '14-03' se remover o ano),
-                "text": texto da anotação,
-                "xytext": tupla com o deslocamento (x, y) para a anotação.
-          - date_column: Nome da coluna que contém as datas (padrão: 'data').
-          - date_format: Formato para exibir a data no gráfico (padrão: '%d-%m-%Y'; use '%d-%m' para remover o ano).
-          - title: Título do gráfico.
-        """
-        df = df[pd.to_datetime(df[date_column], errors='coerce').notna()]
-        
-        df['Data'] = pd.to_datetime(df[date_column]).dt.date
-        
-        df = df[df['monitoramento_nome.keyword'] == monitoramento]
-        
-        df_interacoes = df.groupby('Data')['interacoes'].sum().reset_index(name='Total')
-        
-        df_interacoes['Data'] = pd.to_datetime(df_interacoes['Data']).dt.strftime(date_format)
-        
-        # Criar o gráfico de linha
-        plt.figure(figsize=(24, 16))
-        plt.plot(df_interacoes['Data'], df_interacoes['Total'], marker='o', linestyle='-', linewidth=3, color='steelblue')
-        
-        plt.title(title, fontsize=48)
-        plt.ylabel('Total de Interações', fontsize=36)
-        plt.xticks(rotation=45, fontsize=24)
-        plt.yticks(fontsize=28)
-        plt.grid(True, linestyle='--', alpha=0.7)
-        
-        # Ajustar o limite superior do eixo Y
-        plt.ylim(0, df_interacoes['Total'].max() * 1.2)
-        
-        # Inserir as anotações conforme os picos informados
-        for annotation in annotations:
-            # Encontrar a linha correspondente à data da anotação
-            match_data = df_interacoes[df_interacoes['Data'] == annotation["date"]]
-            if not match_data.empty:
-                y_value = match_data['Total'].values[0]
-                x_value = annotation["date"]
-                
-                plt.annotate(
-                    annotation["text"],
-                    xy=(x_value, y_value),         # Posição do ponto a ser anotado
-                    xycoords='data',
-                    xytext=annotation["xytext"],     # Deslocamento da anotação
-                    textcoords='offset points',
-                    fontsize=24,
-                    ha='center',
-                    arrowprops=dict(
-                        arrowstyle='->',
-                        color='black',
-                        lw=2
-                    )
-                )
-        
-        plt.tight_layout()
-        plt.show()
-
     def plot_interactions_by_service_horizontal(self, df, monitoramento, title=''):
         """
         Filtra o DataFrame pelo monitoramento informado e agrupa as interações por serviço (coluna 'servico.keyword').
@@ -253,7 +197,7 @@ class MetricsProcessor:
         
         plt.title(title, fontsize=20)
         plt.xlabel('Total de Interações', fontsize=16)
-        plt.ylabel('Serviço', fontsize=16)
+        plt.ylabel('Plataforma', fontsize=16)
         plt.xticks(fontsize=12)
         plt.yticks(fontsize=12)
         plt.grid(axis='x', linestyle='--', alpha=0.7)
@@ -271,6 +215,76 @@ class MetricsProcessor:
         
         ax = plt.gca()
         ax.ticklabel_format(style='plain', axis='x')
+        
+        plt.tight_layout()
+        plt.show()
+
+    def plot_daily_interactions(self, df, monitoramento, annotations, 
+                                date_column='data', 
+                                date_format='%d-%m-%Y', 
+                                title='Interações Diárias - Desinformação em Políticas Públicas'):
+        """
+        Filtra o DataFrame pelo monitoramento informado, converte a coluna de data para datetime,
+        agrupa as interações diárias (somando os valores da coluna 'interacoes') e plota um gráfico de linha com anotações.
+        """
+        # Filtrar datas válidas
+        df = df[pd.to_datetime(df[date_column], errors='coerce').notna()]
+        
+        # Converter a coluna de data para datetime e extrair a data (sem horário)
+        df['Data'] = pd.to_datetime(df[date_column]).dt.date
+        
+        # Filtrar pelo monitoramento desejado
+        df = df[df['monitoramento_nome.keyword'] == monitoramento]
+        
+        # Agrupar os dados por data, somando a coluna 'interacoes'
+        df_interacoes = df.groupby('Data')['interacoes'].sum().reset_index(name='Total')
+        
+        # Formatar as datas conforme o formato desejado
+        df_interacoes['Data'] = pd.to_datetime(df_interacoes['Data']).dt.strftime(date_format)
+        
+        # Criar o gráfico de linha
+        plt.figure(figsize=(24, 16))
+        plt.plot(df_interacoes['Data'], df_interacoes['Total'], marker='o', linestyle='-', linewidth=3, color='steelblue')
+        
+        plt.title(title, fontsize=48)
+        plt.ylabel('Total de Interações', fontsize=36)
+        plt.xticks(rotation=45, fontsize=24)
+        plt.yticks(fontsize=28)
+        plt.grid(True, linestyle='--', alpha=0.7)
+        
+        # Ajustar o limite superior do eixo Y
+        plt.ylim(0, df_interacoes['Total'].max() * 1.2)
+        
+        # Evitar notação científica no eixo Y
+        plt.ticklabel_format(style='plain', axis='y')
+        
+        # Aplicar formatação personalizada pt-BR para os valores do eixo Y
+        ax = plt.gca()
+        ax.yaxis.set_major_formatter(ticker.FuncFormatter(format_pt_br))
+        
+        # Inserir as anotações conforme os picos informados
+        for annotation in annotations:
+            # Encontrar a linha correspondente à data da anotação
+            match_data = df_interacoes[df_interacoes['Data'] == annotation["date"]]
+            if not match_data.empty:
+                y_value = match_data['Total'].values[0]
+                x_value = annotation["date"]
+                
+                plt.annotate(
+                    annotation["text"],
+                    xy=(x_value, y_value),         # Posição do ponto a ser anotado
+                    xycoords='data',
+                    xytext=annotation["xytext"],     # Deslocamento da anotação
+                    textcoords='offset points',
+                    fontsize=30,  # Ajuste conforme necessário
+                    ha='center',
+                    arrowprops=dict(
+                        arrowstyle='->',
+                        color='black',
+                        lw=3,
+                        mutation_scale=20  # Aumente se desejar uma seta maior
+                    )
+                )
         
         plt.tight_layout()
         plt.show()
