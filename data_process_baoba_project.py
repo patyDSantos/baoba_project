@@ -82,3 +82,76 @@ class MetricsProcessor:
 
         plt.tight_layout()
         plt.show()
+
+    def plot_daily_occurrences(df, monitoramento, annotations, 
+                           date_column='data', 
+                           date_format='%d-%m-%Y', 
+                           title='Pico de Ocorrências - Desinformação em Políticas Públicas'):
+        """
+        Filtra o DataFrame pelo monitoramento informado, converte a coluna de data para datetime,
+        agrupa as ocorrências diárias e plota um gráfico de linha com anotações.
+    
+        Parâmetros:
+          - df: DataFrame contendo os dados.
+          - monitoramento: Nome do monitoramento a ser filtrado (valor da coluna 'monitoramento_nome.keyword').
+          - annotations: Lista de dicionários com anotações. Cada dicionário deve ter as chaves:
+                "date": data no formato especificado em `date_format` (ex.: '14-03-2025' ou '14-03' se remover o ano),
+                "text": texto da anotação,
+                "xytext": tupla com o deslocamento (x, y) para a anotação.
+          - date_column: Nome da coluna que contém as datas (padrão: 'Data de Ocorrência').
+          - date_format: Formato para exibir a data no gráfico (padrão: '%d-%m-%Y'; use '%d-%m' para remover o ano).
+          - title: Título do gráfico.
+        """
+        # Filtrar as linhas que possuem data válida na coluna especificada
+        df = df[pd.to_datetime(df[date_column], errors='coerce').notna()]
+        
+        # Converter a coluna de data para o tipo datetime e extrair somente a data (sem horário)
+        df['Data'] = pd.to_datetime(df[date_column]).dt.date
+        
+        # Filtrar o DataFrame para o monitoramento informado
+        df = df[df['monitoramento_nome.keyword'] == monitoramento]
+        
+        # Agrupar os dados por data, contando o total de ocorrências por dia
+        df_ocorrencias = df.groupby('Data').size().reset_index(name='Total')
+        
+        # Formatar as datas conforme o formato desejado
+        df_ocorrencias['Data'] = pd.to_datetime(df_ocorrencias['Data']).dt.strftime(date_format)
+        
+        # Criar o gráfico de linha
+        plt.figure(figsize=(24, 16))
+        plt.plot(df_ocorrencias['Data'], df_ocorrencias['Total'], marker='o', linestyle='-', linewidth=3, color='steelblue')
+        
+        plt.title(title, fontsize=48)
+        plt.ylabel('Total de Ocorrências', fontsize=36)
+        plt.xticks(rotation=45, fontsize=24)
+        plt.yticks(fontsize=28)
+        plt.grid(True, linestyle='--', alpha=0.7)
+        
+        # Ajustar o limite superior do eixo Y
+        plt.ylim(0, df_ocorrencias['Total'].max() * 1.2)
+        
+        # Inserir as anotações conforme os picos informados
+        for annotation in annotations:
+            # Encontrar a linha correspondente à data da anotação
+            match_data = df_ocorrencias[df_ocorrencias['Data'] == annotation["date"]]
+            if not match_data.empty:
+                y_value = match_data['Total'].values[0]
+                x_value = annotation["date"]
+                
+                plt.annotate(
+                    annotation["text"],
+                    xy=(x_value, y_value),         # Posição do ponto a ser anotado
+                    xycoords='data',
+                    xytext=annotation["xytext"],     # Deslocamento da anotação
+                    textcoords='offset points',
+                    fontsize=24,
+                    ha='center',
+                    arrowprops=dict(
+                        arrowstyle='->',
+                        color='black',
+                        lw=2
+                    )
+                )
+        
+        plt.tight_layout()
+        plt.show()
