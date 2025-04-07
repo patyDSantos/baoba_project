@@ -130,7 +130,8 @@ class MetricsProcessor:
         plt.plot(df_ocorrencias['Data'], df_ocorrencias['Total'], marker='o', linestyle='-', linewidth=3, color='steelblue')
         
         plt.title(title, fontsize=48)
-        plt.ylabel('Total de Ocorrências', fontsize=36)
+        plt.ylabel('Ocorrências', fontsize=36)
+        plt.xlabel('Data', fontsize=36)
         plt.xticks(rotation=45, fontsize=24)
         plt.yticks(fontsize=28)
         plt.grid(True, linestyle='--', alpha=0.7)
@@ -196,7 +197,7 @@ class MetricsProcessor:
         plt.barh(df_servico['servico.keyword'], df_servico['Total'], color=colors)
         
         plt.title(title, fontsize=20)
-        plt.xlabel('Total de Interações', fontsize=16)
+        plt.xlabel('Interações', fontsize=16)
         plt.ylabel('Plataforma', fontsize=16)
         plt.xticks(fontsize=12)
         plt.yticks(fontsize=12)
@@ -242,7 +243,8 @@ class MetricsProcessor:
         plt.plot(df_interacoes['Data'], df_interacoes['Total'], marker='o', linestyle='-', linewidth=3, color='steelblue')
         
         plt.title(title, fontsize=48)
-        plt.ylabel('Total de Interações', fontsize=36)
+        plt.ylabel('Interações', fontsize=36)
+        plt.xlabel('Data', fontsize=36)
         plt.xticks(rotation=45, fontsize=24)
         plt.yticks(fontsize=28)
         
@@ -269,7 +271,7 @@ class MetricsProcessor:
                     xycoords='data',
                     xytext=annotation["xytext"],     # Deslocamento da anotação
                     textcoords='offset points',
-                    fontsize=30,  # Ajuste conforme necessário
+                    fontsize=24,  # Ajuste conforme necessário
                     ha='center',
                     arrowprops=dict(
                         arrowstyle='->',
