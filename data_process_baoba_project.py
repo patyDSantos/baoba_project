@@ -83,7 +83,7 @@ class MetricsProcessor:
         plt.tight_layout()
         plt.show()
 
-    def plot_daily_occurrences(df, monitoramento, annotations, 
+    def plot_daily_occurrences(self, df, monitoramento, annotations, 
                            date_column='data', 
                            date_format='%d-%m-%Y', 
                            title='Pico de Ocorrências - Desinformação em Políticas Públicas'):
