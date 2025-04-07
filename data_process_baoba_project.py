@@ -87,7 +87,7 @@ class MetricsProcessor:
     def plot_daily_occurrences(self, df, monitoramento, annotations, 
                            date_column='data', 
                            date_format='%d-%m-%Y', 
-                           title='Pico de Ocorrências - Desinformação em Políticas Públicas'):
+                           title='Pico de Ocorrências - '):
         """
         Filtra o DataFrame pelo monitoramento informado, converte a coluna de data para datetime,
         agrupa as ocorrências diárias e plota um gráfico de linha com anotações.
@@ -155,7 +155,7 @@ class MetricsProcessor:
     def plot_daily_interactions(self, df, monitoramento, annotations, 
                             date_column='data', 
                             date_format='%d-%m-%Y', 
-                            title='Interações Diárias - Desinformação em Políticas Públicas'):
+                            title='Interações Diárias - '):
         """
         Filtra o DataFrame pelo monitoramento informado, converte a coluna de data para datetime,
         agrupa as interações diárias (somando os valores da coluna 'interacoes') e plota um gráfico de linha com anotações.
@@ -220,8 +220,7 @@ class MetricsProcessor:
         plt.tight_layout()
         plt.show()
 
-    def plot_interactions_by_service_horizontal(self, df, monitoramento, 
-                                            title='Interações por Serviço - ' + monitoramento):
+    def plot_interactions_by_service_horizontal(self, df, monitoramento, title=''):
         """
         Filtra o DataFrame pelo monitoramento informado e agrupa as interações por serviço (coluna 'servico.keyword').
         Plota um gráfico de barras horizontal com a soma das interações para cada serviço, 
