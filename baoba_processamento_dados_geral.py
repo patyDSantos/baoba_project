@@ -11,17 +11,17 @@ class ProcessamentoMetricas:
         self.df = df  
         self.monitoramentos = monitoramentos
         self.categorias_cores = {
-            "Acessibilidade e Inclusão PCD": "#1f77b4",
+            "Acessibilidade e Inclusão PCD": "#17becf",
             "Combate à Violência Contra a Mulher": "#ff7f0e",
             "Direitos das Crianças e Adolescentes": "#2ca02c",
             "Igualdade Racial": "#d62728",
             "Igualdade de Gênero": "#9467bd",
             "Patrimônio Público e Probidade Administrativa": "#8c564b",
-            "Políticas Públicas": "#bcbd22",
+            "Políticas Públicas": "#1f77b4",
             "Proteção e Inclusão Vulneráveis": "#7f7f7f",
             "Trabalhadores em Plataformas Digitais": "#e377c2",
         }
-   
+      
     @staticmethod
     def extrai_metricas(dados, keys):
         """
