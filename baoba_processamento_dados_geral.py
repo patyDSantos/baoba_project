@@ -5,6 +5,10 @@ import matplotlib.ticker as ticker
 from matplotlib.ticker import FuncFormatter
 import matplotlib.dates as mdates
 
+import plotly.express as px
+from plotly.subplots import make_subplots
+import plotly.graph_objs as go
+
 class ProcessamentoMetricas:
     
     def __init__(self, df, monitoramentos):
@@ -405,3 +409,126 @@ class ProcessamentoMetricas:
                    bbox_to_anchor=(0.82, 0.5),
                    fontsize=legend_fontsize)
         plt.show()
+        
+    def plota_grid_graficos_interacoes_e_ocorrencias_area_interativo(
+    self, df, top_title, date_col, monitoramento_col, ocorrencia_col, interacoes_col):
+        """
+        Plota um grid interativo de gráficos de área para exibir as ocorrências e interações diárias por monitoramento.
+        
+        O método realiza as seguintes etapas:
+        1. Converte a coluna de datas para datetime e extrai somente a data.
+        2. Agrupa os dados por DataSomenteDia e monitoramento, agregando:
+            - Ocorrências: contadas via método 'size' (número de registros).
+            - Interações: somadas com 'sum'.
+        3. Cria tabelas pivot para reorganizar os dados, de forma que cada coluna represente um monitoramento.
+        4. Gera dois subplots interativos (utilizando Plotly):
+            - Um para as ocorrências diárias.
+            - Outro para as interações diárias.
+        5. Utiliza as cores definidas em self.categorias_cores para cada monitoramento. Se uma categoria
+            não estiver definida no dicionário, usa a cor padrão "#999999".
+        6. Cada traço é desenhado com fill='tozeroy' para preencher a área até o eixo zero sem empilhamento.
+        
+        Parâmetros:
+        df (DataFrame): DataFrame contendo os dados brutos.
+        top_title (str): Título complementar que será exibido nos gráficos.
+        date_col (str): Nome da coluna que contém as datas.
+        monitoramento_col (str): Nome da coluna que identifica o monitoramento/categoria.
+        ocorrencia_col (str): Nome da coluna para a qual as ocorrências serão contadas.
+        interacoes_col (str): Nome da coluna que contém os valores de interações a serem somados.
+        
+        Retorno:
+        Exibe um gráfico interativo com dois subplots (ocorrências e interações) usando Plotly.
+        """
+
+        df_copy = df.copy()
+        df_copy['DataDateTime'] = pd.to_datetime(df_copy[date_col], errors='coerce')
+        df_copy['DataSomenteDia'] = df_copy['DataDateTime'].dt.date
+
+        df_grouped = (
+            df_copy
+            .groupby(['DataSomenteDia', monitoramento_col], as_index=False)
+            .agg(
+                Ocorrencias=(ocorrencia_col, 'size'),    # Conta o número de registros para ocorrências
+                Interacoes=(interacoes_col, 'sum')        # Soma os valores de interações
+            )
+            .sort_values(by='DataSomenteDia')
+        )
+        df_grouped['DataSomenteDia'] = pd.to_datetime(df_grouped['DataSomenteDia'])
+
+        df_occ_pivot = df_grouped.pivot(
+            index='DataSomenteDia',
+            columns=monitoramento_col,
+            values='Ocorrencias'
+        ).fillna(0)
+        df_int_pivot = df_grouped.pivot(
+            index='DataSomenteDia',
+            columns=monitoramento_col,
+            values='Interacoes'
+        ).fillna(0)
+
+        df_occ_plot = df_occ_pivot.reset_index()
+        df_int_plot = df_int_pivot.reset_index()
+
+        #Define as cores usando self.categorias_cores se existir, senão utiliza cor padrão "#999999"
+        if hasattr(self, 'categorias_cores'):
+            cores = self.categorias_cores
+        else:
+            cores = {}
+
+        cores_ocorrencias = {cat: cores.get(cat, "#999999") for cat in df_occ_pivot.columns}
+        cores_interacoes = {cat: cores.get(cat, "#999999") for cat in df_int_pivot.columns}
+
+        # Cria a figura com dois subplots (um para cada gráfico)
+        fig = make_subplots(
+            rows=2, cols=1,
+            shared_xaxes=True,
+            subplot_titles=[
+                f'Ocorrências diárias - {top_title}',
+                f'Interações diárias - {top_title}'
+            ]
+        )
+
+        # Adiciona os traces para Ocorrências (não empilhado: usa fill='tozeroy')
+        for monitoramento in df_occ_pivot.columns:
+            cor = cores_ocorrencias.get(monitoramento, "#999999")
+            fig.add_trace(
+                go.Scatter(
+                    x=df_occ_plot['DataSomenteDia'],
+                    y=df_occ_plot[monitoramento],
+                    mode='lines',
+                    name=str(monitoramento),
+                    fill='tozeroy',
+                    line=dict(color=cor),
+                    hoverinfo='x+y+name'
+                ),
+                row=1, col=1
+            )
+
+        # Adiciona os traces para Interações (idem, sem empilhamento)
+        for monitoramento in df_int_pivot.columns:
+            cor = cores_interacoes.get(monitoramento, "#999999")
+            fig.add_trace(
+                go.Scatter(
+                    x=df_int_plot['DataSomenteDia'],
+                    y=df_int_plot[monitoramento],
+                    mode='lines',
+                    name=str(monitoramento),
+                    fill='tozeroy',
+                    line=dict(color=cor),
+                    hoverinfo='x+y+name',
+                    showlegend=False  # Evita legenda duplicada
+                ),
+                row=2, col=1
+            )
+
+        # Configurações de layout e eixos
+        fig.update_layout(
+            height=800,
+            title_text=f"{top_title} - Comparativo Ocorrências e Interações",
+            hovermode='x unified'
+        )
+        fig.update_xaxes(title_text='Data', row=2, col=1)
+        fig.update_yaxes(title_text='Ocorrências', row=1, col=1)
+        fig.update_yaxes(title_text='Interações', row=2, col=1)
+
+        fig.show()
