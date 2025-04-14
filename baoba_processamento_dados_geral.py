@@ -84,7 +84,7 @@ class ProcessamentoMetricas:
         return df_service
         
     def plota_grafico_ocorrencias_df(self, df, coluna, title, colors=None, log_scale=False,
-                                    annotate=True, figsize=(12,8), fontsize=14):
+                                    annotate=True, figsize=(12,8), fontsize=14, save_path=None):
         """
         Plota um gráfico de barras horizontal com base nos dados agregados de um DataFrame.
         Essa função calcula a contagem de ocorrências da coluna informada, ordena os resultados
@@ -134,10 +134,16 @@ class ProcessamentoMetricas:
         plt.title(title, fontsize=fontsize + 8)
         plt.ylabel('Monitoramento', fontsize=18)
         plt.tight_layout()
+        
+         # Opcionalmente salvar o gráfico
+        if save_path:
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        
         plt.show()
+        plt.close()
 
     def plota_grafico_interacoes(self, df, monitoramento_col, interacoes_col, title, colors=None, 
-                                log_scale=False, annotate=True, figsize=(12,8), fontsize=14):
+                                log_scale=False, annotate=True, figsize=(12,8), fontsize=14, save_path=None):
         """
         Plota um gráfico de barras horizontal para as interações somadas por monitoramento.
         
@@ -183,13 +189,21 @@ class ProcessamentoMetricas:
         plt.ylabel('Monitoramento', fontsize=18)
         plt.xlabel('Interações', fontsize=18)
         plt.tight_layout()
+        
+        
+        # Opcionalmente salvar o gráfico
+        if save_path:
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        
         plt.show()
+        plt.close()
+
         
     def plota_grid_graficos_interacoes_e_ocorrencias_estilo_linha(
             self, df, top_title, date_col, monitoramento_col, 
             ocorrencia_col, interacoes_col,
             figsize=(16, 10),
-            title_fontsize=20, label_fontsize=16, legend_fontsize=14, tick_labelsize=14):
+            title_fontsize=20, label_fontsize=16, legend_fontsize=14, tick_labelsize=14, save_path=None):
         """
         Converte a coluna de datas para datetime, extrai a data (sem horário),
         agrupa por data e monitoramento, e plota ocorrências e interações diárias
@@ -289,7 +303,14 @@ class ProcessamentoMetricas:
                    loc='center left',
                    bbox_to_anchor=(0.82, 0.5),
                    fontsize=legend_fontsize)
+        
+                
+        # Opcionalmente salvar o gráfico
+        if save_path:
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        
         plt.show()
+        plt.close()
 
     def plota_grid_graficos_interacoes_e_ocorrencias_estilo_area(
             self, df, top_title, date_col, monitoramento_col,
@@ -298,7 +319,8 @@ class ProcessamentoMetricas:
             title_fontsize=20, label_fontsize=16,
             legend_fontsize=14, tick_labelsize=14,
             alpha_value=0.8,
-            linewidth=1
+            linewidth=1,
+            save_path=None
     ):
         """
         Converte a coluna de datas para datetime, extrai a data (sem horário),
@@ -408,7 +430,14 @@ class ProcessamentoMetricas:
                    loc='center left',
                    bbox_to_anchor=(0.82, 0.5),
                    fontsize=legend_fontsize)
+        
+                
+        # Opcionalmente salvar o gráfico
+        if save_path:
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        
         plt.show()
+        plt.close()
         
     def plota_grid_graficos_interacoes_e_ocorrencias_area_interativo(
     self, df, top_title, date_col, monitoramento_col, ocorrencia_col, interacoes_col):
