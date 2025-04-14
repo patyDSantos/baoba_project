@@ -96,7 +96,8 @@ class ProcessamentoMetricasPorMonitoramento:
                                        date_column='data', 
                                        date_format='%d-%m-%Y', 
                                        title='Pico de Ocorrências - ',
-                                       line_color=None):
+                                       line_color=None,
+                                       save_path=None):
 
 
         """
@@ -169,13 +170,19 @@ class ProcessamentoMetricasPorMonitoramento:
                 )
 
         plt.tight_layout()
+        
+        # Opcionalmente salvar o gráfico
+        if save_path:
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')        
         plt.show()
+        plt.close()
         
     def plota_grafico_interacoes_por_monitoramento(self, df, monitoramento, annotations, 
                                     date_column='data', 
                                     date_format='%d-%m-%Y', 
                                     title='Pico de Interações - ',
-                                    line_color=None):
+                                    line_color=None,
+                                    save_path=None):
 
 
         """
@@ -253,9 +260,14 @@ class ProcessamentoMetricasPorMonitoramento:
                 )
 
         plt.tight_layout()
-        plt.show()
         
-    def plota_grafico_interacoes_por_servico_por_monitoramento(self, df, monitoramento, service_column, title=''):
+        # Opcionalmente salvar o gráfico
+        if save_path:
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')        
+        plt.show()
+        plt.close()
+        
+    def plota_grafico_interacoes_por_servico_por_monitoramento(self, df, monitoramento, service_column, title='', save_path=None):
         """
         Filtra o DataFrame pelo monitoramento informado e agrupa as interações por serviço 
         (utilizando a coluna definida em service_column). Plota um gráfico de barras horizontal com a soma das interações 
@@ -316,4 +328,9 @@ class ProcessamentoMetricasPorMonitoramento:
         ax.xaxis.set_major_formatter(FuncFormatter(self.formata_numeros_pt_br))
         
         plt.tight_layout()
+        
+        # Opcionalmente salvar o gráfico
+        if save_path:
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')        
         plt.show()
+        plt.close()
