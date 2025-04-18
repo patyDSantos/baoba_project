@@ -142,7 +142,7 @@ class ComparadorMonitoramentoPoPeriodo:
     # ------------------------------------------------------------------ #
     # --------------------  GRÁFICO DE OCORRÊNCIAS  --------------------- #
     # ------------------------------------------------------------------ #
-    def plotar_ocorrencias(self, nome_arquivo: str = "grafico_ocorrencias.png") -> Path:
+    def plotar_ocorrencias(self, nome_arquivo: str = "grafico_comparativo_periodo_atual_anterior_ocorrencias.png") -> Path:
         """Gera e salva o gráfico de Ocorrências."""
         if self.df_occ_melt is None:  # garantia de execução prévia
             self.preparar_longos()
@@ -203,7 +203,7 @@ class ComparadorMonitoramentoPoPeriodo:
     # ------------------------------------------------------------------ #
     # --------------------  GRÁFICO DE INTERAÇÕES  ---------------------- #
     # ------------------------------------------------------------------ #
-    def plotar_interacoes(self, nome_arquivo: str = "grafico_interacoes.png") -> Path:
+    def plotar_interacoes(self, nome_arquivo: str = "grafico_comparativo_periodo_atual_anterior_interacoes.png") -> Path:
         """Gera e salva o gráfico de Interações."""
         if self.df_int_melt is None:  # garantia de execução prévia
             self.preparar_longos()
