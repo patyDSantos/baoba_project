@@ -132,7 +132,7 @@ class ProcessamentoMetricas:
         
         plt.xlabel('Ocorrências', fontsize=fontsize)
         plt.title(title, fontsize=fontsize + 8)
-        plt.ylabel('Monitoramento', fontsize=18)
+        plt.ylabel('Eixo', fontsize=18)
         plt.tight_layout()
         
          # Opcionalmente salvar o gráfico
@@ -186,7 +186,7 @@ class ProcessamentoMetricas:
         ax.tick_params(axis='y', which='major', labelsize=14)
 
         plt.title(title, fontsize=fontsize + 8)
-        plt.ylabel('Monitoramento', fontsize=18)
+        plt.ylabel('Eixo', fontsize=18)
         plt.xlabel('Interações', fontsize=18)
         plt.tight_layout()
         
