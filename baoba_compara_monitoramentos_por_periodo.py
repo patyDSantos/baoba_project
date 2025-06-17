@@ -163,7 +163,7 @@ class ComparadorMonitoramentoPoPeriodo:
         )
         ax.set_title("Comparação de Ocorrências (Período Atual vs. Anterior)")
         ax.set_xlabel("Ocorrências")
-        ax.set_ylabel("Monitoramento")
+        ax.set_ylabel("Eixo")
         ax.legend(title="Período", loc="best")
         ax.xaxis.set_major_formatter(mticker.FuncFormatter(self._fmt_ptbr))
 
@@ -224,7 +224,7 @@ class ComparadorMonitoramentoPoPeriodo:
         )
         ax.set_title("Comparação de Interações (Período Atual vs. Anterior)")
         ax.set_xlabel("Interações")
-        ax.set_ylabel("Monitoramento")
+        ax.set_ylabel("Eixo")
         ax.legend(title="Período", loc="best")
         ax.xaxis.set_major_formatter(mticker.FuncFormatter(self._fmt_ptbr))
 
