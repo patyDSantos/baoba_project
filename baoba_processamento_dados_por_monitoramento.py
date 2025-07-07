@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from matplotlib.ticker import FuncFormatter
 import matplotlib.dates as mdates
+from matplotlib.ticker import MaxNLocator
 
 class ProcessamentoMetricasPorMonitoramento:
     
@@ -148,6 +149,7 @@ class ProcessamentoMetricasPorMonitoramento:
         ax.tick_params(axis='y', labelsize=28)
         ax.grid(True, linestyle='--', alpha=0.7)
         ax.set_ylim(0, df_grouped['Total'].max() * 1.2)
+        ax.xaxis.set_major_locator(MaxNLocator(nbins=30))  # Tenta limitar a 30 rótulos
 
         # Insere as anotações para os pontos específicos de acordo com a data informada
         for annotation in annotations:
@@ -236,6 +238,7 @@ class ProcessamentoMetricasPorMonitoramento:
         ax.grid(True, linestyle='--', alpha=0.7)
         ax.set_ylim(0, df_grouped['Total'].max() * 1.2)
         ax.set_yscale('linear')  # Garante escala linear
+        ax.xaxis.set_major_locator(MaxNLocator(nbins=30))  # Tenta limitar a 30 rótulos
 
         ax.yaxis.set_major_formatter(FuncFormatter(self.formata_numeros_pt_br))
 
