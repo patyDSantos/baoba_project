@@ -232,7 +232,7 @@ class ProcessamentoMetricasPorMonitoramento:
         # Configurações de título e rótulos
         ax.set_title(title, fontsize=48)
         ax.set_xlabel('Data', fontsize=36)
-        ax.set_ylabel('Ocorrências', fontsize=36)
+        ax.set_ylabel('Interações', fontsize=36)
         ax.tick_params(axis='x', rotation=45, labelsize=24)
         ax.tick_params(axis='y', labelsize=28)
         ax.grid(True, linestyle='--', alpha=0.7)
